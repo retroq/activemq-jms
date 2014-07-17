@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config/>
+    <context:component-scan base-package="springjms"/>
+    <bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL">
+            <value>tcp://localhost:61616</value>
+        </property>
+        <property name="userName" value="admin"/>
+        <property name="password" value="password"/>
+    </bean>
+
+    <bean id="jmsFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="activeMQConnectionFactory"/>
+    </bean>
+
+    <bean id="destinationResolver" class="org.springframework.jms.support.destination.DynamicDestinationResolver"/>
+
+    <!--<bean id="myMessageListener" class="springjms.MyMessageListener"/>-->
+
+    <!--<bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="jmsFactory"/>-->
+        <!--<property name="destinationResolver" ref="destinationResolver"/>-->
+        <!--<property name="destinationName" value="myqueue"/>-->
+        <!--<property name="messageListener" ref="myMessageListener" />-->
+        <!--<property name="concurrentConsumers" value="2"/>-->
+    <!--</bean>-->
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="jmsFactory"/>
+        <property name="destinationResolver" ref="destinationResolver"/>
+        <property name="deliveryPersistent" value="false"/>
+        <property name="defaultDestinationName" value="myqueue"/>
+    </bean>
+</beans>
